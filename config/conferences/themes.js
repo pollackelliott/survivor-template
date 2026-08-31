@@ -31,3 +31,41 @@ window.CONFERENCE_THEMES = {
     bodyFont: "'League Spartan', -apple-system, BlinkMacSystemFont, sans-serif"
   }
 };
+
+/* Shared UI refinements for every conference pool. */
+(function installSharedSurvivorUiRefinements(){
+  const style = document.createElement('style');
+  style.textContent = `
+    .grid-wrap{
+      overflow:auto;
+      max-height:calc(100vh - 220px);
+      max-height:calc(100dvh - 220px);
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .name-cell .team-dot[style*="--tc:#5d636e"],
+    .card[style*="--tc:#5d636e"] .avatar{
+      visibility:hidden;
+    }
+  `;
+  document.head.appendChild(style);
+
+  function addRulesPaymentLine(){
+    const banner = document.querySelector('#rulesPanel .current-pick-banner');
+    if(!banner || banner.dataset.paymentLineAdded === 'true') return;
+
+    banner.insertAdjacentHTML(
+      'beforeend',
+      '<br><span class="rules-payment">Venmo @elliott-pollack $25 to play</span>'
+    );
+    banner.dataset.paymentLineAdded = 'true';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    addRulesPaymentLine();
+
+    const observer = new MutationObserver(addRulesPaymentLine);
+    observer.observe(document.body, { childList:true, subtree:true });
+  });
+})();
